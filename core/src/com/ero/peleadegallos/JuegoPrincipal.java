@@ -13,4 +13,9 @@ public class JuegoPrincipal extends Game {
     public void create() {
 //        setScreen(new MenuInicio(this));
     }
+
+    @Override
+    public void render() {
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+    }
 }

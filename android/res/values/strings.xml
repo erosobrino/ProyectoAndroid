@@ -1,7 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="app_name">PeleaDeGallos</string>
     <string name="jugar">Jugar</string>
-
+    <string name="opciones">Opciones</string>
+    <string name="logros">Logros</string>
+    <string name="creditos">Creditos</string>
+    <string name="ayuda">Ayuda</string>
+    <string name="home">&#xf015;</string>
+    <string name="volumenOFF">&#xf6a9;</string>
+    <string name="volumenON">&#xf028;</string>
+    <string name="volumen">Volumen</string>
+    <string name="vibrar">Vibrar</string>
+    <string name="vibrarOFF">&#xf1f6;</string>
+    <string name="vibrarON">&#xf0f3;</string>
 </resources>

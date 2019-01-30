@@ -2,6 +2,7 @@ package com.ero.peleadegallos;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Typeface;
 import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -17,13 +18,16 @@ public class Juego extends SurfaceView implements SurfaceHolder.Callback {
     private boolean funcionando = false;      // Control del hilo
     Escena escenaActual;                      //Escena mostrada en pantalla
 
+    boolean volumen;
+
     public Juego(Context context) {
         super(context);
         this.surfaceHolder = getHolder();       // Se obtiene el holder
         this.surfaceHolder.addCallback(this);   // Se indica donde van las funciones callback
         this.context = context;                 // Obtenemos el contexto
         hilo = new Hilo();                      // Inicializamos el hilo
-        setFocusable(true);                     // Aseguramos que reciba eventos de toque
+        setFocusable(true);                     // Aseguramos que reciba eventos de toques
+        volumen = true;
     }
 
     @Override
@@ -38,9 +42,9 @@ public class Juego extends SurfaceView implements SurfaceHolder.Callback {
 //                    case 1:
 //                        escenaActual = new Game(context, nuevaEscena, anchoPantalla, altoPantalla);
 //                        break;
-//                    case 99:
-//                        escenaActual = new Opciones(context, nuevaEscena, anchoPantalla, altoPantalla);
-//                        break;
+                    case 99:
+                        escenaActual = new Opciones(context, nuevaEscena, anchoPantalla, altoPantalla);
+                        break;
 //                    case 98:
 //                        escenaActual = new Records(context, nuevaEscena, anchoPantalla, altoPantalla);
 //                        break;

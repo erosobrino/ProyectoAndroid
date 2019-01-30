@@ -2,10 +2,12 @@ package com.ero.peleadegallos;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.Typeface;
 import android.util.Log;
 import android.view.MotionEvent;
 
@@ -14,31 +16,40 @@ public class Escena {
     int idEscena;
     int anchoPantalla, altoPantalla;
     Bitmap fondo;
-    Paint pTexto, pTexto2, pBoton, pBoton2;
-    Rect rMenu;
+
+    Paint pBoton;
+    Paint paintTextoBotones;//Paint para los textos de los botones
+    Paint paintIconos;
+    Rect volverMenu;
+    Typeface fuenteTexto;
+    Typeface fuenteIconos;
+    boolean volumen=true;
+    boolean vibracion=true;
 
     public Escena(Context context, int idEscena, int anchoPantalla, int altoPantalla) {
         this.context = context;
         this.idEscena = idEscena;
         this.anchoPantalla = anchoPantalla;
         this.altoPantalla = altoPantalla;
-        pTexto = new Paint();
-        pTexto2 = new Paint();
-        pTexto.setColor(Color.RED);
-        pTexto.setTextAlign(Paint.Align.CENTER);
-        pTexto.setTextSize((int) (altoPantalla / 7 * 1.5));
 
-        pTexto2.setTextAlign(Paint.Align.CENTER);
-        pTexto2.setTextSize(altoPantalla / 5);
-        pTexto2.setColor(Color.WHITE);
+        fondo = BitmapFactory.decodeResource(context.getResources(), R.drawable.suelo);
+        fondo = Bitmap.createScaledBitmap(fondo, anchoPantalla, altoPantalla, false);
 
         pBoton = new Paint();
         pBoton.setColor(Color.GREEN);
 
-        pBoton2 = new Paint();
-        pBoton2.setColor(Color.CYAN);
+        volverMenu = new Rect(0, 0, altoPantalla / 7, altoPantalla / 7);
 
-        rMenu = new Rect(anchoPantalla - anchoPantalla / 7, 0, anchoPantalla, anchoPantalla / 7);
+        fuenteTexto = Typeface.createFromAsset(context.getAssets(), "fonts/Beelova.otf");
+        paintTextoBotones = new Paint();
+        paintTextoBotones.setTypeface(fuenteTexto);
+        paintTextoBotones.setColor(Color.BLUE);
+
+        fuenteIconos=Typeface.createFromAsset(context.getAssets(),"fonts/fa-solid-900.ttf");
+        paintIconos=new Paint();
+        paintIconos.setTypeface(fuenteIconos);
+        paintIconos.setColor(Color.BLUE);
+        paintIconos.setTextSize(altoPantalla/8);
     }
 
     public int onTouchEvent(MotionEvent event) {
@@ -52,7 +63,7 @@ public class Escena {
 
             case MotionEvent.ACTION_UP:                     // Al levantar el último dedo
             case MotionEvent.ACTION_POINTER_UP:  // Al levantar un dedo que no es el último
-                if (pulsa(rMenu, event) && idEscena != 0) return 0;
+                if (pulsa(volverMenu, event) && idEscena != 0) return 0;
                 break;
 
 //            case MotionEvent.ACTION_MOVE: // Se mueve alguno de los dedos
@@ -73,7 +84,14 @@ public class Escena {
     // Rutina de dibujo en el lienzo. Se le llamará desde el hilo
     public void dibujar(Canvas c) {
         try {
-            if (idEscena != 0) c.drawRect(rMenu, pBoton);
+            c.drawColor(Color.CYAN);
+            c.drawBitmap(fondo, 0, 0, null);
+            if (idEscena != 0) {
+                c.drawRect(volverMenu, pBoton);
+                Double posYHome=altoPantalla/8.5;
+                c.drawText(context.getText(R.string.home).toString(),0,posYHome.floatValue(),paintIconos);
+            }
+
         } catch (Exception e) {
             Log.i("Error al dibujar", e.getLocalizedMessage());
         }
