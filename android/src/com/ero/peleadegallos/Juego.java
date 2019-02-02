@@ -3,6 +3,9 @@ package com.ero.peleadegallos;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Typeface;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.media.SoundPool;
 import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -18,7 +21,14 @@ public class Juego extends SurfaceView implements SurfaceHolder.Callback {
     private boolean funcionando = false;      // Control del hilo
     Escena escenaActual;                      //Escena mostrada en pantalla
 
-    boolean volumen;
+    boolean volumen = true;
+    boolean vibracion = true;
+
+    private AudioManager audioManager;
+    public MediaPlayer mediaPlayer;
+    private SoundPool efectos;
+    private int sonidoWoosh, sonidoPajaro, sonidoExplosion;
+    final private int maxSonidosSimultaneos = 10;
 
     public Juego(Context context) {
         super(context);
@@ -27,7 +37,12 @@ public class Juego extends SurfaceView implements SurfaceHolder.Callback {
         this.context = context;                 // Obtenemos el contexto
         hilo = new Hilo();                      // Inicializamos el hilo
         setFocusable(true);                     // Aseguramos que reciba eventos de toques
-        volumen = true;
+
+        audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+        mediaPlayer = MediaPlayer.create(context, R.raw.offlimits);
+        int v = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+        mediaPlayer.setVolume(v / 2, v / 2);
+        mediaPlayer.setLooping(true);
     }
 
     @Override
@@ -35,15 +50,17 @@ public class Juego extends SurfaceView implements SurfaceHolder.Callback {
         synchronized (surfaceHolder) {
             int nuevaEscena = escenaActual.onTouchEvent(event);
             if (nuevaEscena != escenaActual.idEscena) {
+                volumen = escenaActual.volumen;
+                vibracion = escenaActual.vibracion;
                 switch (nuevaEscena) {
                     case 0:
-                        escenaActual = new MenuInicio(context, nuevaEscena, anchoPantalla, altoPantalla);
+                        escenaActual = new MenuInicio(context, nuevaEscena, anchoPantalla, altoPantalla, volumen, vibracion);
                         break;
 //                    case 1:
 //                        escenaActual = new Game(context, nuevaEscena, anchoPantalla, altoPantalla);
 //                        break;
                     case 99:
-                        escenaActual = new Opciones(context, nuevaEscena, anchoPantalla, altoPantalla);
+                        escenaActual = new Opciones(context, nuevaEscena, anchoPantalla, altoPantalla, volumen, vibracion);
                         break;
 //                    case 98:
 //                        escenaActual = new Records(context, nuevaEscena, anchoPantalla, altoPantalla);
@@ -51,6 +68,16 @@ public class Juego extends SurfaceView implements SurfaceHolder.Callback {
 //                    case 97:
 //                        escenaActual = new Ayuda(context, nuevaEscena, anchoPantalla, altoPantalla);
 //                        break;
+                    case 96:
+                        escenaActual = new Creditos(context, nuevaEscena, anchoPantalla, altoPantalla, volumen, vibracion);
+                        break;
+                    case 95:
+                        if (volumen) {
+                            mediaPlayer.start();
+                        } else {
+                            mediaPlayer.pause();
+                        }
+                        break;
                 }
             }
         }
@@ -59,11 +86,11 @@ public class Juego extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public void surfaceCreated(SurfaceHolder surfaceHolder) {
-
     }
 
     @Override
     public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
+        mediaPlayer.release();
         hilo.setFuncionando(false);  // Se para el hilo
         try {
             hilo.join();   // Se espera a que finalize
@@ -76,7 +103,8 @@ public class Juego extends SurfaceView implements SurfaceHolder.Callback {
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
         anchoPantalla = width;               // se establece el nuevo ancho de pantalla
         altoPantalla = height;               // se establece el nuevo alto de pantalla
-        escenaActual = new MenuInicio(context, 0, anchoPantalla, altoPantalla);
+        escenaActual = new MenuInicio(context, 0, anchoPantalla, altoPantalla, volumen, vibracion);
+        mediaPlayer.start();
         hilo.setSurfaceSize(width, height);   // se establece el nuevo ancho y alto de pantalla en el hilo
         hilo.setFuncionando(true); // Se le indica al hilo que puede arrancar
         if (hilo.getState() == Thread.State.NEW)

@@ -2,7 +2,6 @@
 <resources>
     <string name="app_name">PeleaDeGallos</string>
     <string name="jugar">Game</string>
-    <string name="creditos">Credits</string>
     <string name="opciones">Options</string>
     <string name="logros">Records</string>
     <string name="ayuda">Help</string>
@@ -13,4 +12,5 @@
     <string name="vibrar">Vibration</string>
     <string name="vibrarOFF">&#xf1f6;</string>
     <string name="vibrarON">&#xf0f3;</string>
+    <string name="creditos">&#xf05a;</string>
 </resources>

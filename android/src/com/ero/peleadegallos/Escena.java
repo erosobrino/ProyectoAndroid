@@ -7,9 +7,15 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.Typeface;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.media.SoundPool;
 import android.util.Log;
 import android.view.MotionEvent;
+
+import java.io.IOException;
 
 public class Escena {
     Context context;
@@ -20,17 +26,20 @@ public class Escena {
     Paint pBoton;
     Paint paintTextoBotones;//Paint para los textos de los botones
     Paint paintIconos;
-    Rect volverMenu;
+    RectF volverMenu;
     Typeface fuenteTexto;
     Typeface fuenteIconos;
-    boolean volumen=true;
-    boolean vibracion=true;
 
-    public Escena(Context context, int idEscena, int anchoPantalla, int altoPantalla) {
+    boolean volumen;
+    boolean vibracion;
+
+    public Escena(Context context, int idEscena, int anchoPantalla, int altoPantalla, boolean volumen, boolean vibracion) {
         this.context = context;
         this.idEscena = idEscena;
         this.anchoPantalla = anchoPantalla;
         this.altoPantalla = altoPantalla;
+        this.volumen = volumen;
+        this.vibracion = vibracion;
 
         fondo = BitmapFactory.decodeResource(context.getResources(), R.drawable.suelo);
         fondo = Bitmap.createScaledBitmap(fondo, anchoPantalla, altoPantalla, false);
@@ -38,18 +47,18 @@ public class Escena {
         pBoton = new Paint();
         pBoton.setColor(Color.GREEN);
 
-        volverMenu = new Rect(0, 0, altoPantalla / 7, altoPantalla / 7);
+        volverMenu = new RectF(0, 0, altoPantalla / 7, altoPantalla / 7);
 
         fuenteTexto = Typeface.createFromAsset(context.getAssets(), "fonts/Beelova.otf");
         paintTextoBotones = new Paint();
         paintTextoBotones.setTypeface(fuenteTexto);
         paintTextoBotones.setColor(Color.BLUE);
 
-        fuenteIconos=Typeface.createFromAsset(context.getAssets(),"fonts/fa-solid-900.ttf");
-        paintIconos=new Paint();
+        fuenteIconos = Typeface.createFromAsset(context.getAssets(), "fonts/fa-solid-900.ttf");
+        paintIconos = new Paint();
         paintIconos.setTypeface(fuenteIconos);
         paintIconos.setColor(Color.BLUE);
-        paintIconos.setTextSize(altoPantalla/8);
+        paintIconos.setTextSize(altoPantalla / 8);
     }
 
     public int onTouchEvent(MotionEvent event) {
@@ -87,9 +96,8 @@ public class Escena {
             c.drawColor(Color.CYAN);
             c.drawBitmap(fondo, 0, 0, null);
             if (idEscena != 0) {
-                c.drawRect(volverMenu, pBoton);
-                Double posYHome=altoPantalla/8.5;
-                c.drawText(context.getText(R.string.home).toString(),0,posYHome.floatValue(),paintIconos);
+                Double posYHome = altoPantalla / 8.5;
+                c.drawText(context.getText(R.string.home).toString(), 0, posYHome.floatValue(), paintIconos);
             }
 
         } catch (Exception e) {
@@ -97,8 +105,9 @@ public class Escena {
         }
     }
 
-    public boolean pulsa(Rect boton, MotionEvent event) {
+    public boolean pulsa(RectF boton, MotionEvent event) {
         if (boton.contains((int) (event.getX()), (int) (event.getY()))) {
+            Log.i("boton", boton.left + "");
             return true;
         } else {
             return false;

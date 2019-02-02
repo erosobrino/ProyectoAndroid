@@ -5,25 +5,71 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.RectF;
+import android.util.Log;
+import android.view.MotionEvent;
 
 class Opciones extends Escena {
 
-    public Opciones(Context context, int nuevaEscena, int anchoPantalla, int altoPantalla) {
-        super(context, nuevaEscena, anchoPantalla, altoPantalla);
+    RectF rectVolumen, rectVibracion;
+    float x;
+
+
+    public Opciones(Context context, int idEscena, int anchoPantalla, int altoPantalla, boolean volumen, boolean vibracion) {
+        super(context, idEscena, anchoPantalla, altoPantalla, volumen, vibracion);
+        rectVolumen = new RectF(anchoPantalla / 7 * 3, altoPantalla / 16, anchoPantalla / 7 * 4, altoPantalla / 10 * 2);
+        rectVibracion = new RectF(anchoPantalla / 7 * 3, altoPantalla / 9 * 2, anchoPantalla / 7 * 4, altoPantalla / 11 * 4);
     }
 
     @Override
-    public void dibujar(Canvas c) {
-        super.dibujar(c);
-        if (volumen) {
-            c.drawText(String.format("%-20s %2s", context.getText(R.string.volumen).toString(), context.getText(R.string.volumenON).toString()), anchoPantalla / 7, altoPantalla / 6, paintIconos);
-        } else {
-            c.drawText(String.format("%s %2s", context.getText(R.string.volumen).toString(), context.getText(R.string.volumenOFF).toString()), anchoPantalla / 7, altoPantalla / 6, paintIconos);
+    public int onTouchEvent(MotionEvent event) {
+        int idNuevo = super.onTouchEvent(event);
+        int accion = event.getActionMasked();             //Obtenemos el tipo de pulsación
+        switch (accion) {
+            case MotionEvent.ACTION_DOWN:           // Primer dedo toca
+            case MotionEvent.ACTION_POINTER_DOWN:  // Segundo y siguientes tocan
+                break;
+            case MotionEvent.ACTION_UP:                     // Al levantar el último dedo
+            case MotionEvent.ACTION_POINTER_UP:  // Al levantar un dedo que no es el último
+                if (pulsa(rectVolumen, event)) {
+                    volumen = !volumen;
+                    return 95;
+                } else if (pulsa(rectVibracion, event)) vibracion = !vibracion;
+                else if (pulsa(volverMenu, event)) return 0;
+                break;
+            case MotionEvent.ACTION_MOVE: // Se mueve alguno de los dedos
+                break;
+            default:
+                Log.i("Otra acción", "Acción no definida: " + accion);
         }
-        if (vibracion) {
-            c.drawText(String.format("%-20s %2s", context.getText(R.string.vibrar).toString(), context.getText(R.string.vibrarON).toString()), anchoPantalla / 7, altoPantalla / 6 * 2, paintIconos);
+        if (idNuevo != idEscena) {
+            return idNuevo;
         } else {
-            c.drawText(String.format("%s %2s", context.getText(R.string.vibrar).toString(), context.getText(R.string.vibrarOFF).toString()), anchoPantalla / 7, altoPantalla / 6 * 2, paintIconos);
+            return idEscena;
+        }
+    }
+
+
+    @Override
+    public void dibujar(Canvas c) {
+        try {
+            super.dibujar(c);
+//        c.drawRect(rectVolumen, pBoton);
+//        c.drawRect(rectVibracion, pBoton);
+            c.drawText(context.getText(R.string.volumen).toString(), anchoPantalla / 7, altoPantalla / 6, paintIconos);
+            c.drawText(context.getText(R.string.vibrar).toString(), anchoPantalla / 7, altoPantalla / 6 * 2, paintIconos);
+            x = anchoPantalla / 21 * 10;
+            if (volumen) {
+                c.drawText(context.getText(R.string.volumenON).toString(), x, altoPantalla / 6, paintIconos);
+            } else {
+                c.drawText(context.getText(R.string.volumenOFF).toString(), x, altoPantalla / 6, paintIconos);
+            }
+            if (vibracion) {
+                c.drawText(context.getText(R.string.vibrarON).toString(), x, altoPantalla / 6 * 2, paintIconos);
+            } else {
+                c.drawText(context.getText(R.string.vibrarOFF).toString(), x / 30 * 29, altoPantalla / 6 * 2, paintIconos);
+            }
+        } catch (Exception e) {
         }
     }
 }

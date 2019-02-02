@@ -4,7 +4,6 @@
     <string name="jugar">Jugar</string>
     <string name="opciones">Opciones</string>
     <string name="logros">Logros</string>
-    <string name="creditos">Creditos</string>
     <string name="ayuda">Ayuda</string>
     <string name="home">&#xf015;</string>
     <string name="volumenOFF">&#xf6a9;</string>
@@ -13,4 +12,5 @@
     <string name="vibrar">Vibrar</string>
     <string name="vibrarOFF">&#xf1f6;</string>
     <string name="vibrarON">&#xf0f3;</string>
+    <string name="creditos">&#xf05a;</string>
 </resources>

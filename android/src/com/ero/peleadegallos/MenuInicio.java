@@ -3,35 +3,43 @@ package com.ero.peleadegallos;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.util.Log;
 import android.view.MotionEvent;
 
 public class MenuInicio extends Escena {
 
-    Rect ayuda, opciones, juego, logros;
-    int alto, ancho, ancho2;
+    RectF ayuda, opciones, juego, logros, creditos;
+    int alto, ancho;
     String strJugar = context.getText(R.string.jugar).toString();
     String strOpciones = context.getText(R.string.opciones).toString();
     String strLogros = context.getText(R.string.logros).toString();
     String strAyuda = context.getText(R.string.ayuda).toString();
     String strCreditos = context.getText(R.string.creditos).toString();
-    int xJugarText, xOpcionesText, xLogrosText, xAyudaText;
-    int yJugarText, yOpcionesText, yLogrosText, yAyudaText;
+    float xJugarText, xOpcionesText, xLogrosText, xAyudaText;
+    Double yJugarText, yOpcionesText, yLogrosText, yAyudaText;
     int tamañoPaint1, tamañoPaint2;
     Rect cajaTexto;
+    Double xCreditosText;
+    int yCreditosText;
 
-    public MenuInicio(Context context, int idEscena, int anchoPantalla, int altoPantalla) {
-        super(context, idEscena, anchoPantalla, altoPantalla);
+    public MenuInicio(Context context, int idEscena, int anchoPantalla, int altoPantalla, boolean volumen,boolean vibracion) {
+        super(context, idEscena, anchoPantalla, altoPantalla, volumen,vibracion);
         alto = altoPantalla / 7;
         ancho = anchoPantalla / 7;
 
         tamañoPaint1 = altoPantalla / 5;
         tamañoPaint2 = altoPantalla / 20;
 
-        juego = new Rect(ancho, alto, ancho * 6, alto * 3);
-        opciones = new Rect(ancho, alto * 4, ancho * 2, alto * 5);
-        logros = new Rect(ancho * 3, alto * 4, ancho * 4, alto * 5);
-        ayuda = new Rect(ancho * 5, alto * 4, ancho * 6, alto * 5);
+        xCreditosText = anchoPantalla - altoPantalla / 7.5;
+        yCreditosText = altoPantalla / 8;
+
+        juego = new RectF(ancho, alto, ancho * 6, alto * 3);
+        opciones = new RectF(ancho, alto * 4, ancho * 2, alto * 5);
+        logros = new RectF(ancho * 3, alto * 4, ancho * 4, alto * 5);
+        ayuda = new RectF(ancho * 5, alto * 4, ancho * 6, alto * 5);
+        creditos = new RectF(anchoPantalla - altoPantalla / 7, 0, anchoPantalla, altoPantalla / 7);
+
 
         cajaTexto = new Rect();//usado para medir tamaño de textos
 
@@ -39,21 +47,21 @@ public class MenuInicio extends Escena {
 
         paintTextoBotones.getTextBounds(strJugar, 0, strJugar.length(), cajaTexto);
         xJugarText = juego.left + (juego.width() - cajaTexto.width()) / 2;
-        yJugarText = juego.centerY() + (juego.height() - cajaTexto.height()) / 2;
+        yJugarText = (juego.centerY() + (juego.height() - cajaTexto.height()) / 2) * 1.05;
 
         paintTextoBotones.setTextSize(tamañoPaint2);
 
         paintTextoBotones.getTextBounds(strOpciones, 0, strOpciones.length(), cajaTexto);
         xOpcionesText = opciones.left + (opciones.width() - cajaTexto.width()) / 2;
-        yOpcionesText = opciones.centerY() + (opciones.height() - cajaTexto.height()) / 2;
+        yOpcionesText = (opciones.centerY() + (opciones.height() - cajaTexto.height()) / 2) * 0.95;
 
         paintTextoBotones.getTextBounds(strLogros, 0, strLogros.length(), cajaTexto);
         xLogrosText = logros.left + (logros.width() - cajaTexto.width()) / 2;
-        yLogrosText = logros.centerY() + (logros.height() - cajaTexto.height()) / 2;
+        yLogrosText = (logros.centerY() + (logros.height() - cajaTexto.height()) / 2) * 0.95;
 
         paintTextoBotones.getTextBounds(strAyuda, 0, strAyuda.length(), cajaTexto);
         xAyudaText = ayuda.left + (ayuda.width() - cajaTexto.width()) / 2;
-        yAyudaText = ayuda.centerY() + (ayuda.height() - cajaTexto.height()) / 2;
+        yAyudaText = (ayuda.centerY() + (ayuda.height() - cajaTexto.height()) / 2) * 0.95;
     }
 
 
@@ -66,18 +74,20 @@ public class MenuInicio extends Escena {
     public void dibujar(Canvas c) {
         try {
             super.dibujar(c);
-            c.drawRect(juego, pBoton);
+            c.drawRoundRect(juego, alto, alto, pBoton);
             c.drawRect(opciones, pBoton);
             c.drawRect(logros, pBoton);
             c.drawRect(ayuda, pBoton);
+//            c.drawRect(creditos, pBoton);
 
             paintTextoBotones.setTextSize(tamañoPaint1);
-            c.drawText(strJugar, xJugarText, yJugarText, paintTextoBotones);
+            c.drawText(strJugar, xJugarText, yJugarText.floatValue(), paintTextoBotones);
 
             paintTextoBotones.setTextSize(tamañoPaint2);
-            c.drawText(strOpciones, xOpcionesText, yOpcionesText, paintTextoBotones);
-            c.drawText(strLogros, xLogrosText, yLogrosText, paintTextoBotones);
-            c.drawText(strAyuda, xAyudaText, yAyudaText, paintTextoBotones);
+            c.drawText(strOpciones, xOpcionesText, yOpcionesText.floatValue(), paintTextoBotones);
+            c.drawText(strLogros, xLogrosText, yLogrosText.floatValue(), paintTextoBotones);
+            c.drawText(strAyuda, xAyudaText, yAyudaText.floatValue(), paintTextoBotones);
+            c.drawText(strCreditos, xCreditosText.floatValue(), yCreditosText, paintIconos);
 
 
         } catch (Exception e) {
@@ -85,6 +95,7 @@ public class MenuInicio extends Escena {
         }
     }
 
+    @Override
     public int onTouchEvent(MotionEvent event) {
         int pointerIndex = event.getActionIndex();        //Obtenemos el índice de la acción
         int pointerID = event.getPointerId(pointerIndex); //Obtenemos el Id del pointer asociado a la acción
@@ -100,6 +111,7 @@ public class MenuInicio extends Escena {
                 else if (pulsa(opciones, event)) return 99;
                 else if (pulsa(logros, event)) return 98;
                 else if (pulsa(ayuda, event)) return 97;
+                else if (pulsa(creditos, event)) return 96;
                 break;
 
             case MotionEvent.ACTION_MOVE: // Se mueve alguno de los dedos
